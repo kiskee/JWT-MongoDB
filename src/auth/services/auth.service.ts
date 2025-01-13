@@ -28,7 +28,6 @@ export class AuthService {
     try {
       // Simulate user search (replace with your database logic)
       const user = await this.usersService.findByEmail(loginDto.email);
-      console.log("aca el susuario", user)
       if (!user) {
         throw new UnauthorizedException('Invalid credentials');
       }

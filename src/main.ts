@@ -11,6 +11,24 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     })
   );
+
+  // Configuración de CORS
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'https://body-form.vercel.app'
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: [
+      'Origin',
+      'X-Requested-With',
+      'Content-Type',
+      'Accept',
+      'Authorization',
+    ],
+  });
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
