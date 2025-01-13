@@ -16,10 +16,10 @@ export class User extends Document {
   @Prop()
   email_verified: boolean;
 
-  @Prop({ required: true })
+  @Prop({})
   family_name: string;
 
-  @Prop({ required: true })
+  @Prop({})
   given_name: string;
 
   @Prop({ required: true })

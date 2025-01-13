@@ -25,7 +25,7 @@ export class GoogleDto {
         required: true,
       })
       @IsString()
-      @IsNotEmpty({ message: 'El apellido es obligatorio' })
+      @IsOptional()
       family_name: string;
     
       @ApiProperty({
@@ -34,7 +34,7 @@ export class GoogleDto {
         required: true,
       })
       @IsString()
-      @IsNotEmpty({ message: 'El nombre es obligatorio' })
+      @IsOptional()
       given_name: string;
     
       @ApiProperty({
