@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { LoginDto } from '../dto/login.dto';
+import { GoogleDto } from '../dto/google.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,6 +24,17 @@ export class AuthController {
    * @param loginDto Data Transfer Object containing user credentials (email and password).
    * @returns An object containing access and refresh tokens, and user information.
    */
+  // @Post('login')
+  // @UsePipes(
+  //   new ValidationPipe({
+  //     transform: true,
+  //     whitelist: true,
+  //     forbidNonWhitelisted: true,
+  //   }),
+  // )
+  // login(@Body() loginDto: LoginDto) {
+  //   return this.authService.login(loginDto);
+  // }
   @Post('login')
   @UsePipes(
     new ValidationPipe({
@@ -31,8 +43,8 @@ export class AuthController {
       forbidNonWhitelisted: true,
     }),
   )
-  login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  login(@Body() loginDto: GoogleDto) {
+    return this.authService.loginGoogle(loginDto);
   }
 
   /**
@@ -67,4 +79,6 @@ export class AuthController {
 
     return this.authService.renewToken(refreshToken);
   }
+
+
 }

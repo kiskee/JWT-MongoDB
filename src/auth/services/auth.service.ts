@@ -3,6 +3,7 @@ import { LoginDto } from '../dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from 'src/users/services/user.service';
+import { GoogleDto } from '../dto/google.dto';
 
 export class AuthService {
   private readonly jwtSecret = process.env.JWT_SECRET;
@@ -32,15 +33,15 @@ export class AuthService {
         throw new UnauthorizedException('Invalid credentials');
       }
 
-      // Validate password
-      const isPasswordValid = await this.comparePasswords(
-        loginDto.password,
-        user.password,
-      );
+      // // Validate password
+      // const isPasswordValid = await this.comparePasswords(
+      //   loginDto.password,
+      //   user.password,
+      // );
 
-      if (!isPasswordValid) {
-        throw new UnauthorizedException('Invalid credentials');
-      }
+      // if (!isPasswordValid) {
+      //   throw new UnauthorizedException('Invalid credentials');
+      // }
 
       // Generate tokens
       const accessToken = this.generateAccessToken(user);
@@ -50,7 +51,6 @@ export class AuthService {
         user: {
           id: user.id,
           email: user.email,
-          // other fields you want to return
         },
         accessToken,
         refreshToken,
@@ -119,7 +119,7 @@ export class AuthService {
       },
       {
         secret: this.jwtSecret,
-        expiresIn: '15m', // Short-lived access token
+        expiresIn: '60', // Short-lived access token
       },
     );
   }
@@ -153,5 +153,38 @@ export class AuthService {
     hashedPassword: string,
   ): Promise<boolean> {
     return bcrypt.compare(plainPassword, hashedPassword);
+  }
+
+  async loginGoogle(loginDto: GoogleDto) {
+    try {
+      // Simulate user search (replace with your database logic)
+      let user = await this.usersService.findByEmail(loginDto.email);
+      
+      if (!user) {
+        
+        user = await this.usersService.createUser(loginDto);
+      }
+
+      const payload = {
+        sub: user.id,
+        email: user.email,
+        googleId: user.sub
+      };
+      // Generate tokens
+      const accessToken = this.generateAccessToken(payload);
+      const refreshToken = this.generateRefreshToken(payload);
+
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          // other fields you want to return
+        },
+        accessToken,
+        refreshToken,
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Error during login'+error);
+    }
   }
 }

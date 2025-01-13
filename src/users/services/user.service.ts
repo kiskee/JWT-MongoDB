@@ -27,7 +27,7 @@ export class UsersService {
   async createUser(createUserDto: any): Promise<User> {
     try {
       const newUser = new this.userModel(createUserDto);
-      newUser.password = await bcrypt.hash(newUser.password, this.saltRounds);
+      //newUser.password = await bcrypt.hash(newUser.password, this.saltRounds);
       newUser.createdAt = new Date();
       newUser.updatedAt = new Date();
       return await newUser.save();
@@ -119,11 +119,8 @@ export class UsersService {
    * @param email - The email address to search for.
    * @returns A promise that resolves with the found user or throws an exception if not found.
    */
-  async findByEmail(email: string): Promise<User> {
+  async findByEmail(email: string): Promise<User | null> {
     const user = await this.userModel.findOne({ email }).exec();
-    if (!user) {
-      throw new NotFoundException(`User with email ${email} was not found`);
-    }
-    return user;
+    return user || null;
   }
 }
