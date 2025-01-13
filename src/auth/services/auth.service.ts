@@ -159,16 +159,15 @@ export class AuthService {
     try {
       // Simulate user search (replace with your database logic)
       let user = await this.usersService.findByEmail(loginDto.email);
-      
+
       if (!user) {
-        
         user = await this.usersService.createUser(loginDto);
       }
 
       const payload = {
         sub: user.id,
         email: user.email,
-        googleId: user.sub
+        googleId: user.sub,
       };
       // Generate tokens
       const accessToken = this.generateAccessToken(payload);
@@ -184,7 +183,7 @@ export class AuthService {
         refreshToken,
       };
     } catch (error) {
-      throw new UnauthorizedException('Error during login'+error);
+      throw new UnauthorizedException('Error during login' + error);
     }
   }
 }
