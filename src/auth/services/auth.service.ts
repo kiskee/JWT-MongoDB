@@ -119,7 +119,7 @@ export class AuthService {
       },
       {
         secret: this.jwtSecret,
-        expiresIn: '60', // Short-lived access token
+        expiresIn: '60m', // Short-lived access token
       },
     );
   }
