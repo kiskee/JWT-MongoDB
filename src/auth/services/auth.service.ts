@@ -161,7 +161,22 @@ export class AuthService {
       let user = await this.usersService.findByEmail(loginDto.email);
 
       if (!user) {
+        if ( (loginDto.password || loginDto.password != "") &&  loginDto.email_verified == true){
+          loginDto.password = "";
+        }
         user = await this.usersService.createUser(loginDto);
+      }
+
+      // Validate password
+      if (user.password != ""){
+        const isPasswordValid = await this.comparePasswords(
+          loginDto.password,
+          user.password,
+        );
+  
+        if (!isPasswordValid) {
+          throw new UnauthorizedException('Invalid credentials');
+        }
       }
 
       const payload = {

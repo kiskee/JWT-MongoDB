@@ -27,7 +27,9 @@ export class UsersService {
   async createUser(createUserDto: any): Promise<User> {
     try {
       const newUser = new this.userModel(createUserDto);
-      //newUser.password = await bcrypt.hash(newUser.password, this.saltRounds);
+      if (newUser.password != '' && !newUser.email_verified) {
+        newUser.password = await bcrypt.hash(newUser.password, this.saltRounds);
+      }
       newUser.createdAt = new Date();
       newUser.updatedAt = new Date();
       return await newUser.save();
