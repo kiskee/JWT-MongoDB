@@ -25,10 +25,10 @@ export class User extends Document {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
+  @Prop({})
   picture: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ unique: true })
   sub: string;
 
   @Prop()
