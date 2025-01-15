@@ -17,7 +17,8 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'http://localhost:5173',
-      'https://body-form.vercel.app'
+      'https://svg-natacion.vercel.app',
+      '*'
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
