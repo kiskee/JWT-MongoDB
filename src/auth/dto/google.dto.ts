@@ -20,10 +20,10 @@ export class GoogleDto {
   @ApiProperty({
     description: 'Indica si el correo electrónico ha sido verificado',
     example: true,
-    required: false,
+    required: true,
   })
   @IsBoolean()
-  @IsOptional()
+  @IsNotEmpty({ message: 'El email debe estar verificado' })
   email_verified?: boolean;
 
   @ApiProperty({
@@ -65,17 +65,9 @@ export class GoogleDto {
   @ApiProperty({
     description: 'ID único del usuario en Google',
     example: '1234567890abcdef',
-    required: false,
+    required: true,
   })
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   sub: string;
-
-  @ApiProperty({
-    description: 'password del usuario manual',
-    example: 'Hector123@',
-  })
-  @IsString()
-  @IsOptional()
-  password: string;
 }

@@ -32,7 +32,9 @@ export class UsersService {
       }
       newUser.createdAt = new Date();
       newUser.updatedAt = new Date();
-      return await newUser.save();
+      const newUserCreated = await newUser.save();
+      delete newUserCreated.password;
+      return newUserCreated;
     } catch (error) {
       // Specific Mongoose validation errors.
       if (error.name === 'ValidationError') {

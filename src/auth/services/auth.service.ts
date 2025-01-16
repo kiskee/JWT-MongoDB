@@ -33,15 +33,15 @@ export class AuthService {
         throw new UnauthorizedException('Invalid credentials');
       }
 
-      // // Validate password
-      // const isPasswordValid = await this.comparePasswords(
-      //   loginDto.password,
-      //   user.password,
-      // );
+      // Validate password
+      const isPasswordValid = await this.comparePasswords(
+        loginDto.password,
+        user.password,
+      );
 
-      // if (!isPasswordValid) {
-      //   throw new UnauthorizedException('Invalid credentials');
-      // }
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
 
       // Generate tokens
       const accessToken = this.generateAccessToken(user);
@@ -157,26 +157,15 @@ export class AuthService {
 
   async loginGoogle(loginDto: GoogleDto) {
     try {
+      // 1. Validar que el email esté verificado por Google
+      if (!loginDto.email_verified) {
+        throw new UnauthorizedException('Google email not verified');
+      }
       // Simulate user search (replace with your database logic)
       let user = await this.usersService.findByEmail(loginDto.email);
 
-      if (!user) {
-        if ( (loginDto.password || loginDto.password != "") &&  loginDto.email_verified == true){
-          loginDto.password = "";
-        }
-        user = await this.usersService.createUser(loginDto);
-      }
-
-      // Validate password
-      if (user.password != ""){
-        const isPasswordValid = await this.comparePasswords(
-          loginDto.password,
-          user.password,
-        );
-  
-        if (!isPasswordValid) {
-          throw new UnauthorizedException('Invalid credentials');
-        }
+      if (user.sub && user.sub !== loginDto.sub) {
+        throw new UnauthorizedException('Invalid Google account');
       }
 
       const payload = {
