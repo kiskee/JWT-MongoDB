@@ -184,7 +184,9 @@ export class AuthService {
         user: {
           id: user.id,
           email: user.email,
-          // other fields you want to return
+          role: user.role,
+          picture: user.picture,
+          name: user.name,
         },
         accessToken,
         refreshToken,
