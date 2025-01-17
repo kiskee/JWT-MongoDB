@@ -35,6 +35,9 @@ export class User extends Document {
   password: string;
 
   @Prop()
+  role: string;
+
+  @Prop()
   createdAt: Date;
 
   @Prop()

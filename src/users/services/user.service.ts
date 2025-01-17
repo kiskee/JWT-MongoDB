@@ -30,6 +30,7 @@ export class UsersService {
       if (newUser.password != '' && !newUser.email_verified) {
         newUser.password = await bcrypt.hash(newUser.password, this.saltRounds);
       }
+      newUser.role = "user"
       newUser.createdAt = new Date();
       newUser.updatedAt = new Date();
       const newUserCreated = await newUser.save();
