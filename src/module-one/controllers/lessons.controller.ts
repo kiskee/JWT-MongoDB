@@ -1,8 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
-import { LessonsService } from "../services/lessons.service";
-import { CreateLessonDto } from "../dto/create-lesson.dto";
-import { UpdateLessonDto } from "../dto/update-lesson.dto";
-import { JwtAuthGuard } from "src/auth/guard/jwt.guard";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { LessonsService } from '../services/lessons.service';
+import { CreateLessonDto } from '../dto/create-lesson.dto';
+import { UpdateLessonDto } from '../dto/update-lesson.dto';
+import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
 
 @Controller('lessons')
 export class LessonsController {
@@ -44,5 +53,11 @@ export class LessonsController {
   @UseGuards(JwtAuthGuard)
   async remove(@Param('id') id: string) {
     return this.lessonsService.remove(id);
+  }
+
+  @Post('/find/value')
+  @UseGuards(JwtAuthGuard)
+  async findBy(@Body() data: any) {
+    return await this.lessonsService.findLessonBy(data.field, data.value);
   }
 }

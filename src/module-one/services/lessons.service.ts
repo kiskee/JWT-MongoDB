@@ -5,8 +5,6 @@ import { CreateLessonDto } from '../dto/create-lesson.dto';
 import { UpdateLessonDto } from '../dto/update-lesson.dto';
 import { Lesson } from '../shemas/lesson.shema';
 
-
-
 @Injectable()
 export class LessonsService {
   constructor(
@@ -50,5 +48,16 @@ export class LessonsService {
     if (!result) {
       throw new NotFoundException(`Lesson with ID "${id}" not found`);
     }
+  }
+
+  /**
+   *
+   * @param field
+   * @param value
+   */
+  async findLessonBy(field: string, value: any) {
+    const filter = { [field]: value }; // Usamos una clave dinámica
+    const lesson = await this.lessonModel.findOne(filter).exec();
+    return lesson || null;
   }
 }
