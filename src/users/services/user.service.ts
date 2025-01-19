@@ -30,7 +30,7 @@ export class UsersService {
       if (newUser.password != '' && !newUser.email_verified) {
         newUser.password = await bcrypt.hash(newUser.password, this.saltRounds);
       }
-      newUser.role = "user"
+      newUser.role = 'user';
       newUser.createdAt = new Date();
       newUser.updatedAt = new Date();
       const newUserCreated = await newUser.save();
@@ -126,6 +126,6 @@ export class UsersService {
    */
   async findByEmail(email: string): Promise<User | null> {
     const user = await this.userModel.findOne({ email }).exec();
-    return user || null;
+    return user || ({} as User);
   }
 }

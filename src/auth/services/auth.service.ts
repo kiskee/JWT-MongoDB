@@ -29,8 +29,9 @@ export class AuthService {
     try {
       // Simulate user search (replace with your database logic)
       const user = await this.usersService.findByEmail(loginDto.email);
-      if (!user) {
-        throw new UnauthorizedException('Invalid credentials');
+
+      if (Object.keys(user).length === 0 && user.constructor === Object) {
+        throw new UnauthorizedException('Usuario o Contraseña invalidos');
       }
 
       // Validate password
@@ -40,7 +41,7 @@ export class AuthService {
       );
 
       if (!isPasswordValid) {
-        throw new UnauthorizedException('Invalid credentials');
+        throw new UnauthorizedException('Usuario o Contraseña invalidos');
       }
 
       // Generate tokens
@@ -59,7 +60,7 @@ export class AuthService {
         refreshToken,
       };
     } catch (error) {
-      throw new UnauthorizedException('Error during login');
+      throw error;
     }
   }
 
@@ -162,13 +163,13 @@ export class AuthService {
     try {
       // 1. Validar que el email esté verificado por Google
       if (!loginDto.email_verified) {
-        throw new UnauthorizedException('Google email not verified');
+        throw new UnauthorizedException('Error al intentar entrar con Google');
       }
       // Simulate user search (replace with your database logic)
       let user = await this.usersService.findByEmail(loginDto.email);
 
       if (user.sub && user.sub !== loginDto.sub) {
-        throw new UnauthorizedException('Invalid Google account');
+        throw new UnauthorizedException('Error al intentar entrar con Google');
       }
 
       const payload = {
@@ -192,7 +193,7 @@ export class AuthService {
         refreshToken,
       };
     } catch (error) {
-      throw new UnauthorizedException('Error during login' + error);
+      throw error;
     }
   }
 }
