@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
   UseGuards,
@@ -48,12 +49,18 @@ export class UsersController {
     return this.usersService.findAllUsers();
   }
 
+  @Get('search/:id')
+  async search(@Param('id') id: string): Promise<any> {
+    return this.usersService.search(id);
+  }
+
   /**
    * Endpoint to retrieve a specific user by their ID.
    * @param id - The unique identifier of the user.
    * @returns The user document if found.
    */
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: string): Promise<User> {
     return this.usersService.findOne(id);
   }
@@ -64,6 +71,7 @@ export class UsersController {
    * @returns A 204 HTTP status code for a successful deletion.
    */
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT) // Sends a 204 status code for successful deletions.
   async delete(@Param('id') id: string): Promise<void> {
     await this.usersService.delete(id);
@@ -75,7 +83,8 @@ export class UsersController {
    * @param updateUserDto - The fields to update (e.g., username, email, password).
    * @returns The updated user document.
    */
-  @Put(':id')
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -89,6 +98,7 @@ export class UsersController {
    * @returns The user document if found.
    */
   @Get('email/:email')
+  @UseGuards(JwtAuthGuard)
   async findByEmail(@Param('email') email: string): Promise<User> {
     return this.usersService.findByEmail(email);
   }

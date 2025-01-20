@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../shemas/user.schema';
 import * as bcrypt from 'bcrypt';
+import { UserProgressService } from './userProgress.service';
 
 @Injectable()
 export class UsersService {
@@ -16,7 +17,10 @@ export class UsersService {
    * Constructor to inject the user model dependency.
    * @param userModel - Mongoose model for the User schema.
    */
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private readonly userProgressService: UserProgressService,
+  ) {}
 
   /**
    * Creates a new user in the database.
@@ -127,5 +131,19 @@ export class UsersService {
   async findByEmail(email: string): Promise<User | null> {
     const user = await this.userModel.findOne({ email }).exec();
     return user || ({} as User);
+  }
+
+  async search(id: string): Promise<any> {
+    const userProgress = await this.userProgressService.findBy('userId', id);
+    console.log('aca la data de esto ', userProgress);
+    const userData = (await this.userModel.findById(id).exec());
+    console.log('aca la data de esto otro ', userData);
+    if (userData || userProgress){
+      const allData = { userProgress, userData };
+      return allData;
+    } else {
+      return null
+    }
+    
   }
 }

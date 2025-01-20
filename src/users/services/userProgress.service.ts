@@ -5,7 +5,6 @@ import { CreateUserProgressDto } from '../dto/create-userProgress.dto';
 import { UpdateUserProgressDto } from '../dto/update-userProgress.dto';
 import { UserProgress } from '../shemas/userProgress.shema';
 
-
 @Injectable()
 export class UserProgressService {
   constructor(
@@ -13,7 +12,9 @@ export class UserProgressService {
     private readonly userProgressModel: Model<UserProgress>,
   ) {}
 
-  async create(createUserProgressDto: CreateUserProgressDto): Promise<UserProgress> {
+  async create(
+    createUserProgressDto: CreateUserProgressDto,
+  ): Promise<UserProgress> {
     const userProgress = new this.userProgressModel(createUserProgressDto);
     return userProgress.save();
   }
@@ -24,13 +25,13 @@ export class UserProgressService {
 
   async findOne(id: string): Promise<UserProgress> {
     const userProgress = await this.userProgressModel.findById(id).exec();
-    if (!userProgress) {
-      throw new NotFoundException(`UserProgress with ID ${id} not found`);
-    }
-    return userProgress;
+    return userProgress || ({} as UserProgress);
   }
 
-  async update(id: string, updateUserProgressDto: UpdateUserProgressDto): Promise<UserProgress> {
+  async update(
+    id: string,
+    updateUserProgressDto: UpdateUserProgressDto,
+  ): Promise<UserProgress> {
     const updatedProgress = await this.userProgressModel
       .findByIdAndUpdate(id, updateUserProgressDto, { new: true })
       .exec();
@@ -45,5 +46,11 @@ export class UserProgressService {
     if (!result) {
       throw new NotFoundException(`UserProgress with ID ${id} not found`);
     }
+  }
+
+  async findBy(field: string, value: any) {
+    const filter = { [field]: value }; // Usamos una clave dinámica
+    const userProgress = await this.userProgressModel.findOne(filter).exec();
+    return userProgress || null;
   }
 }
