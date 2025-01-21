@@ -6,10 +6,14 @@ import {
   UsePipes,
   ValidationPipe,
   Headers,
+  Get,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { LoginDto } from '../dto/login.dto';
 import { GoogleDto } from '../dto/google.dto';
+import { JwtAuthGuard } from '../guard/jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -82,5 +86,12 @@ export class AuthController {
     return this.authService.renewToken(refreshToken);
   }
 
-
+  @Get('signature')
+  @UseGuards(JwtAuthGuard)
+  async getSignature(
+    @Query('value') value: number,
+    @Query('currency') currency: string,
+  ) {
+    return await this.authService.generateSignature( value, currency );
+  }
 }

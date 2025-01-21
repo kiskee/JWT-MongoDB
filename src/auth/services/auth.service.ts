@@ -4,6 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from 'src/users/services/user.service';
 import { GoogleDto } from '../dto/google.dto';
+import { v4 as uuidv4 } from 'uuid';
+import * as crypto from 'crypto';
 
 export class AuthService {
   private readonly jwtSecret = process.env.JWT_SECRET;
@@ -195,5 +197,30 @@ export class AuthService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async generateSignature(value: number, currency: string) {
+    const reference = uuidv4();
+
+    // Generar fecha de expiración (10 minutos después)
+    const currentDate = new Date();
+    const expirationDate = new Date(currentDate.getTime() + 10 * 60 * 1000);
+    const formattedDate = expirationDate.toISOString();
+    // Concatenar datos para la firma
+    const concatenatedString = `${reference}${value}${currency}${formattedDate}${process.env.INT_KI}`;
+
+    // Generar hash
+    const encoder = new TextEncoder();
+    const data = encoder.encode(concatenatedString);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+
+    return {
+      mensaje: hashHex,
+      reference: reference,
+    };
   }
 }
