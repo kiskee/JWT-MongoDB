@@ -40,10 +40,8 @@ export class TransactionsService {
       .update(validateString)
       .digest('hex');
 
-    const cretaedTrans = new this.quizModel({
-      ...eventData,
-      ownToken: calculatedChecksum,
-    });
+    eventData['ownToken'] = calculatedChecksum;
+    const cretaedTrans = new this.quizModel(eventData);
     return cretaedTrans.save();
   }
 }
