@@ -14,6 +14,7 @@ import { AuthService } from '../services/auth.service';
 import { LoginDto } from '../dto/login.dto';
 import { GoogleDto } from '../dto/google.dto';
 import { JwtAuthGuard } from '../guard/jwt.guard';
+import { GetUser } from '../decorators/get-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -91,7 +92,8 @@ export class AuthController {
   async getSignature(
     @Query('value') value: number,
     @Query('currency') currency: string,
+    @GetUser() user: any
   ) {
-    return await this.authService.generateSignature( value, currency );
+    return await this.authService.generateSignature( value, currency, user );
   }
 }

@@ -3,6 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Transactions } from '../shemas/trasactions.shema';
 import * as crypto from 'crypto';
+import { UsersService } from 'src/users/services/user.service';
+import { UserProgressService } from 'src/users/services/userProgress.service';
+import { CreateUserProgressDto } from 'src/users/dto/create-userProgress.dto';
 
 /**
  * Service responsible for handling transactions. It provides methods to
@@ -13,6 +16,8 @@ export class TransactionsService {
   constructor(
     @InjectModel(Transactions.name)
     private trasactionModel: Model<Transactions>, // Injects the Transactions model into the service
+    private readonly usersService: UsersService,
+    private readonly userProgressService: UserProgressService,
   ) {}
 
   /**
@@ -30,7 +35,7 @@ export class TransactionsService {
    * @throws BadRequestException if the provided checksum does not match the expected value.
    */
   async processTrasaction(eventData: any, checksumHeader: any) {
-    console.log(eventData);
+    // console.log(eventData);
     const signatureChecksum = eventData.signature.checksum;
 
     // Validate if the provided checksum matches the signature checksum
@@ -65,7 +70,10 @@ export class TransactionsService {
     // Add calculated checksum and received checksum to the event data for debugging
     eventData['ownToken'] = calculatedChecksum;
     eventData['headerToken'] = checksumHeader;
-    eventData['reference'] = eventData.data.transaction.id ?? '';
+
+    const [reference, userId] = eventData.data.transaction.id.split('/');
+
+    eventData['reference'] = reference.trim() ?? '';
 
     // Validate the checksum and mark the payment as valid or invalid
     if (
@@ -73,6 +81,23 @@ export class TransactionsService {
       signatureChecksum == calculatedChecksum
     ) {
       eventData['validPayment'] = true;
+      if (userId) {
+        await this.usersService.findOne(userId);
+        const progress: CreateUserProgressDto = {
+          userId: userId,
+          courseId: '678aaa7ef28e21b40c841554',
+          currentModule: 1,
+          currentLesson: 1,
+          completedLessons: [],
+          totalLessons: 15,
+          quizScore: 0,
+          finalExamPassed: false,
+          startedAt: new Date().toISOString(),
+          completedAt: '',
+        };
+
+        await this.userProgressService.create(progress);
+      }
     } else {
       eventData['validPayment'] = false;
     }

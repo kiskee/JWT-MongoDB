@@ -13,11 +13,18 @@ import { QuizService } from './services/quiz.service';
 import { Transactions, TransactionsShema } from './shemas/trasactions.shema';
 import { TransactionsController } from './controllers/trasactions.controller';
 import { TransactionsService } from './services/trasactions.service';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  controllers: [LessonsController, ModulesController, QuizController, TransactionsController],
+  controllers: [
+    LessonsController,
+    ModulesController,
+    QuizController,
+    TransactionsController,
+  ],
   providers: [ModulesService, LessonsService, QuizService, TransactionsService],
   imports: [
+    UsersModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET, // Usar variables de entorno
       signOptions: { expiresIn: '15m' },
@@ -26,7 +33,11 @@ import { TransactionsService } from './services/trasactions.service';
       { name: Lesson.name, schema: LessonSchema, collection: 'lessons' },
       { name: ModuleX.name, schema: ModuleSchema, collection: 'modules' },
       { name: Quiz.name, schema: QuizSchema, collection: 'quizes' },
-      { name: Transactions.name, schema: TransactionsShema, collection: 'transactions' },
+      {
+        name: Transactions.name,
+        schema: TransactionsShema,
+        collection: 'transactions',
+      },
     ]),
   ],
   exports: [ModulesService, LessonsService, QuizService, TransactionsService],

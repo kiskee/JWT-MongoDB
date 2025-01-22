@@ -199,9 +199,8 @@ export class AuthService {
     }
   }
 
-  async generateSignature(value: number, currency: string) {
-    const reference = uuidv4();
-
+  async generateSignature(value: number, currency: string, user: any) {
+    const reference = uuidv4()+"/"+user.sub;
     // Generar fecha de expiración (10 minutos después)
     const currentDate = new Date();
     const expirationDate = new Date(currentDate.getTime() + 10 * 60 * 1000);
