@@ -72,7 +72,7 @@ export class TransactionsService {
     eventData['headerToken'] = checksumHeader;
 
     const [reference, userId] = eventData.data.transaction.id.split('/');
-
+    console.log("aca la referencia y el userid", reference, userId)
     eventData['reference'] = reference.trim() ?? '';
 
     // Validate the checksum and mark the payment as valid or invalid
@@ -95,7 +95,7 @@ export class TransactionsService {
           startedAt: new Date().toISOString(),
           completedAt: '',
         };
-
+        console.log("por aca acrear esto: ", progress)
         await this.userProgressService.create(progress);
       }
     } else {
