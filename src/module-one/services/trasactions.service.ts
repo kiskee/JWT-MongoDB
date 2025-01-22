@@ -38,8 +38,7 @@ export class TransactionsService {
     const calculatedChecksum = crypto
       .createHash('sha256')
       .update(validateString)
-      .digest('hex')
-      .toUpperCase();
+      .digest('hex');
 
     const cretaedTrans = new this.quizModel({
       ...eventData,
