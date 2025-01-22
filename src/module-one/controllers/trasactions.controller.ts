@@ -25,6 +25,7 @@ export class TransactionsController {
     @Headers('x-event-checksum') checksumHeader: string,
     @GetUser() user: any
   ) {
+    console.log("entre al controllador", user)
     await this.transactionsService.processTrasaction(eventData, checksumHeader, user);
     return 'Event received';
   }
