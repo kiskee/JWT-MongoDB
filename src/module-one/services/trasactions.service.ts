@@ -10,7 +10,7 @@ export class TransactionsService {
     @InjectModel(Transactions.name) private quizModel: Model<Transactions>,
   ) {}
 
-  private readonly secretKey = 'prod_events_OcHnIzeBl5socpwByQ4hA52Em3USQ93Z'; //'test_events_YaOtpZbRUJeBrKfXl9HgoMHWrmER9Yub';
+  private readonly secretKey = process.env.EVENT_KILU;
 
   async processTrasaction(eventData: any, checksumHeader: any) {
     const signatureChecksum = eventData.signature.checksum;
