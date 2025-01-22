@@ -219,9 +219,11 @@ export class AuthService {
       .join('');
 
     return {
-      mensaje: hashHex,
+      currency: currency,
+      amountInCents: value,
       reference: reference,
-      expire: formattedDate,
+      signatureIntegrity: hashHex,
+      expirationTime: formattedDate,
     };
   }
 }
