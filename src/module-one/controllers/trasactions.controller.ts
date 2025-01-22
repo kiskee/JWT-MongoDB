@@ -20,7 +20,7 @@ export class TransactionsController {
     @Body() eventData: any,
     @Headers('x-event-checksum') checksumHeader: string,
   ) {
-
+    console.info("aca lo que me llega de la trans", eventData, checksumHeader)
     await this.transactionsService.processTrasaction(eventData, checksumHeader)
     
     return 'Event received';
