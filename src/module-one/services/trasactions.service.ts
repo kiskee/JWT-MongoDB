@@ -29,7 +29,7 @@ export class TransactionsService {
    * @throws BadRequestException if the provided checksum does not match the expected value.
    */
   async processTrasaction(eventData: any, checksumHeader: any) {
-    console.log(eventData)
+    console.log(eventData);
     const signatureChecksum = eventData.signature.checksum;
 
     // Validate if the provided checksum matches the signature checksum
@@ -64,8 +64,7 @@ export class TransactionsService {
     // Add calculated checksum and received checksum to the event data for debugging
     eventData['ownToken'] = calculatedChecksum;
     eventData['headerToken'] = checksumHeader;
-    eventData["reference"] = eventData.data.transaction.id ?? ""
-    //eventData["userId"] = user.sub ?? ""
+    eventData['reference'] = eventData.data.transaction.id ?? '';
 
     // Validate the checksum and mark the payment as valid or invalid
     if (

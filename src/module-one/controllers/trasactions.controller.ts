@@ -18,13 +18,11 @@ export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   async handleEvent(
     @Body() eventData: any,
     @Headers('x-event-checksum') checksumHeader: string,
   ) {
-    //console.log("entre al controllador", user)
     await this.transactionsService.processTrasaction(eventData, checksumHeader);
     return 'Event received';
   }
