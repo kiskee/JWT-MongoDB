@@ -11,7 +11,8 @@ import * as crypto from 'crypto';
 @Injectable()
 export class TransactionsService {
   constructor(
-    @InjectModel(Transactions.name) private quizModel: Model<Transactions>, // Injects the Transactions model into the service
+    @InjectModel(Transactions.name)
+    private trasactionModel: Model<Transactions>, // Injects the Transactions model into the service
   ) {}
 
   /**
@@ -77,7 +78,13 @@ export class TransactionsService {
     }
 
     // Save the transaction data to the database
-    const cretaedTrans = new this.quizModel(eventData);
+    const cretaedTrans = new this.trasactionModel(eventData);
     return cretaedTrans.save();
+  }
+
+  async findTransactionBy(field: string, value: any) {
+    const filter = { [field]: value }; // Usamos una clave dinámica
+    const lesson = await this.trasactionModel.findOne(filter).exec();
+    return lesson || null;
   }
 }

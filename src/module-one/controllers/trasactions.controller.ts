@@ -26,4 +26,13 @@ export class TransactionsController {
     await this.transactionsService.processTrasaction(eventData, checksumHeader);
     return 'Event received';
   }
+
+  @Post('/find/value')
+  @UseGuards(JwtAuthGuard)
+  async findBy(@Body() data: any) {
+    return await this.transactionsService.findTransactionBy(
+      data.field,
+      data.value,
+    );
+  }
 }
