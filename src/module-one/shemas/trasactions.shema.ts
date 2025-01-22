@@ -47,6 +47,10 @@ export class Transactions extends Document {
 
   @Prop()
   sent_at: string;
+
+  @Prop()
+  ownToken: string;
+
 }
 
 export const TransactionsShema = SchemaFactory.createForClass(Transactions);
