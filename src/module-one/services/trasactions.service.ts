@@ -42,7 +42,7 @@ export class TransactionsService {
       .toUpperCase();
 
     const cretaedTrans = new this.quizModel({
-      eventData,
+      ...eventData,
       ownToken: calculatedChecksum,
     });
     return cretaedTrans.save();
