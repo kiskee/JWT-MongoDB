@@ -51,6 +51,11 @@ export class Transactions extends Document {
   @Prop()
   ownToken: string;
 
+  @Prop()
+  headerToken: string;
+
+  @Prop()
+  validPayment: boolean;
 }
 
 export const TransactionsShema = SchemaFactory.createForClass(Transactions);
