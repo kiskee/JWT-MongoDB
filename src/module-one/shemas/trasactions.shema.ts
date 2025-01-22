@@ -45,4 +45,4 @@ export class Transactions extends Document {
   sent_at: string;
 }
 
-export const EventSchema = SchemaFactory.createForClass(Event);
+export const TransactionsShema = SchemaFactory.createForClass(Transactions);

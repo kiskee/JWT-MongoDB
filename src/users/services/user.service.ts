@@ -135,15 +135,14 @@ export class UsersService {
 
   async search(id: string): Promise<any> {
     const userProgress = await this.userProgressService.findBy('userId', id);
-    console.log('aca la data de esto ', userProgress);
-    const userData = (await this.userModel.findById(id).exec());
-    console.log('aca la data de esto otro ', userData);
-    if (userData || userProgress){
+
+    const userData = await this.userModel.findById(id).exec();
+
+    if (userData || userProgress) {
       const allData = { userProgress, userData };
       return allData;
     } else {
-      return null
+      return null;
     }
-    
   }
 }
