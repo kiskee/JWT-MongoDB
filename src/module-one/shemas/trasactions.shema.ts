@@ -3,45 +3,49 @@ import { Document } from 'mongoose';
 
 @Schema()
 export class Transactions extends Document {
-  @Prop({ required: true })
+  @Prop()
   event: string;
 
   @Prop({
     type: Object,
-    required: true,
   })
   data: {
     transaction: {
       id: string;
+      created_at: string;
+      finalized_at: string;
       amount_in_cents: number;
       reference: string;
       customer_email: string;
       currency: string;
       payment_method_type: string;
-      redirect_url: string;
+      payment_method: [Object];
       status: string;
-      shipping_address: string | null;
-      payment_link_id: string | null;
-      payment_source_id: string | null;
+      status_message: any;
+      shipping_address: any;
+      redirect_url: string;
+      payment_source_id: any;
+      payment_link_id: any;
+      customer_data: [Object];
+      billing_data: any;
     };
   };
 
-  @Prop({ required: true })
+  @Prop()
   environment: string;
 
   @Prop({
     type: Object,
-    required: true,
   })
   signature: {
     properties: string[];
     checksum: string;
   };
 
-  @Prop({ required: true })
+  @Prop()
   timestamp: number;
 
-  @Prop({ required: true })
+  @Prop()
   sent_at: string;
 }
 
