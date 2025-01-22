@@ -6,6 +6,12 @@ export class Transactions extends Document {
   @Prop()
   event: string;
 
+  @Prop()
+  reference: string;
+
+  @Prop()
+  userId: string;
+
   @Prop({
     type: Object,
   })
