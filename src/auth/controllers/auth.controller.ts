@@ -41,7 +41,6 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-
   @Post('login-google')
   @UsePipes(
     new ValidationPipe({
@@ -92,8 +91,8 @@ export class AuthController {
   async getSignature(
     @Query('value') value: number,
     @Query('currency') currency: string,
-    @GetUser() user: any
+    @GetUser() user: any,
   ) {
-    return await this.authService.generateSignature( value, currency, user );
+    return await this.authService.generateSignature(value, currency, user);
   }
 }

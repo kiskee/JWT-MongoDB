@@ -173,15 +173,9 @@ export class AuthService {
       if (user.sub && user.sub !== loginDto.sub) {
         throw new UnauthorizedException('Error al intentar entrar con Google');
       }
-
-      const payload = {
-        sub: user.id,
-        email: user.email,
-        googleId: user.sub,
-      };
       // Generate tokens
-      const accessToken = this.generateAccessToken(payload);
-      const refreshToken = this.generateRefreshToken(payload);
+      const accessToken = this.generateAccessToken(user);
+      const refreshToken = this.generateRefreshToken(user);
 
       return {
         user: {
@@ -200,7 +194,7 @@ export class AuthService {
   }
 
   async generateSignature(value: number, currency: string, user: any) {
-    const reference = uuidv4()+"/"+user.sub;
+    const reference = uuidv4() + '/' + user.sub;
     // Generar fecha de expiración (10 minutos después)
     const currentDate = new Date();
     const expirationDate = new Date(currentDate.getTime() + 10 * 60 * 1000);
