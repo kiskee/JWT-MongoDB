@@ -13,6 +13,10 @@ export class TransactionsService {
   private readonly secretKey = process.env.EVENT_KILU;
 
   async processTrasaction(eventData: any, checksumHeader: any) {
+    const cretaedTrans = new this.quizModel({
+      eventData,
+    });
+    cretaedTrans.save();
     const signatureChecksum = eventData.signature.checksum;
     if (checksumHeader != signatureChecksum) {
       throw new BadRequestException(`error`);
@@ -41,10 +45,6 @@ export class TransactionsService {
       .digest('hex')
       .toUpperCase();
 
-    const cretaedTrans = new this.quizModel({
-      eventData,
-      ownToken: calculatedChecksum,
-    });
-    return cretaedTrans.save();
+    return
   }
 }
