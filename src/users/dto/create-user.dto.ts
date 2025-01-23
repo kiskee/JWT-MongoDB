@@ -90,4 +90,12 @@ export class CreateUserDto {
     },
   )
   password: string;
+
+  @ApiProperty({
+    description: 'Modulos registrados/comprados',
+    example: '[{module:"1234567"}]',
+    required: false,
+  })
+  @IsOptional()
+  modules: object[];
 }

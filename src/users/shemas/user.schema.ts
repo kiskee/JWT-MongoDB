@@ -38,6 +38,9 @@ export class User extends Document {
   role: string;
 
   @Prop()
+  modules: object[];
+
+  @Prop()
   createdAt: Date;
 
   @Prop()

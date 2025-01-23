@@ -99,6 +99,15 @@ export class TransactionsService {
           startedAt: new Date().toISOString(),
           completedAt: '',
         };
+        await this.usersService.update(userId, {
+          role: 'student',
+          modules: [
+            {
+              courseId: '678aaa7ef28e21b40c841554',
+              userTransaction: calculatedChecksum,
+            },
+          ],
+        });
         await this.userProgressService.create(progress);
       }
     } else {
