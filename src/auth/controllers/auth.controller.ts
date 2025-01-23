@@ -41,6 +41,11 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
+  /**
+   * Handles user login requests using Google authentication.
+   * @param loginDto Data Transfer Object containing Google authentication details.
+   * @returns An object containing access and refresh tokens, and user information.
+   */
   @Post('login-google')
   @UsePipes(
     new ValidationPipe({
@@ -86,6 +91,13 @@ export class AuthController {
     return this.authService.renewToken(refreshToken);
   }
 
+  /**
+   * Handles requests to generate a signature for a transaction.
+   * @param value The value of the transaction.
+   * @param currency The currency of the transaction.
+   * @param user The authenticated user extracted from the JWT token.
+   * @returns A generated signature for the transaction.
+   */
   @Get('signature')
   @UseGuards(JwtAuthGuard)
   async getSignature(

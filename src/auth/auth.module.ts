@@ -7,10 +7,24 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/users/shemas/user.schema';
 import { JwtService } from '@nestjs/jwt';
 
+/**
+ * AuthModule is a NestJS module that encapsulates authentication-related functionality.
+ * It imports necessary modules, registers controllers and providers, and exports services for use in other modules.
+ */
 @Module({
+  // Controllers that belong to this module
   controllers: [AuthController],
-  providers: [AuthService,UsersService,JwtService],
-  imports: [UsersModule, MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),],
+
+  // Providers (services, repositories, etc.) that belong to this module
+  providers: [AuthService, UsersService, JwtService],
+
+  // Modules and dependencies that this module requires
+  imports: [
+    UsersModule, // Import the UsersModule to access user-related functionality
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]), // Register the User schema with Mongoose
+  ],
+
+  // Services that this module exports for use in other modules
   exports: [AuthService],
 })
 export class AuthModule {}

@@ -193,16 +193,28 @@ export class AuthService {
     }
   }
 
+  /**
+   * Generates a signature for a transaction based on the provided parameters.
+   * The signature is created using a concatenated string of transaction details and a secret key, which is then hashed using SHA-256.
+   *
+   * @param value The monetary value of the transaction.
+   * @param currency The currency code for the transaction (e.g., 'USD', 'EUR').
+   * @param user The authenticated user object containing user-specific information (e.g., user ID).
+   * @returns An object containing the transaction details, including the generated signature, reference, and expiration time.
+   */
   async generateSignature(value: number, currency: string, user: any) {
+    // Generate a unique reference for the transaction using a UUID and the user's ID
     const reference = uuidv4() + '/' + user.sub;
-    // Generar fecha de expiración (10 minutos después)
+
+    // Generate an expiration date for the transaction (10 minutes from the current time)
     const currentDate = new Date();
     const expirationDate = new Date(currentDate.getTime() + 10 * 60 * 1000);
     const formattedDate = expirationDate.toISOString();
-    // Concatenar datos para la firma
+
+    // Concatenate the transaction details and the secret key into a single string
     const concatenatedString = `${reference}${value}${currency}${formattedDate}${process.env.INT_KI}`;
 
-    // Generar hash
+    // Generate a SHA-256 hash of the concatenated string
     const encoder = new TextEncoder();
     const data = encoder.encode(concatenatedString);
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
@@ -211,12 +223,13 @@ export class AuthService {
       .map((b) => b.toString(16).padStart(2, '0'))
       .join('');
 
+    // Return the transaction details, including the generated signature
     return {
-      currency: currency,
-      amountInCents: value,
-      reference: reference,
-      signatureIntegrity: hashHex,
-      expirationTime: formattedDate,
+      currency: currency, // The currency of the transaction
+      amountInCents: value, // The transaction value in cents
+      reference: reference, // The unique reference for the transaction
+      signatureIntegrity: hashHex, // The generated SHA-256 hash (signature)
+      expirationTime: formattedDate, // The expiration time of the transaction
     };
   }
 }

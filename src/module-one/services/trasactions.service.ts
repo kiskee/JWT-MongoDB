@@ -8,8 +8,10 @@ import { UserProgressService } from 'src/users/services/userProgress.service';
 import { CreateUserProgressDto } from 'src/users/dto/create-userProgress.dto';
 
 /**
- * Service responsible for handling transactions. It provides methods to
- * process and validate transactions, ensuring data integrity and security.
+ * TransactionsService handles business logic related to transactions.
+ * It provides methods for processing, validating, and saving transactions.
+ * This service also interacts with the UsersService and UserProgressService
+ * to update user progress upon successful transactions.
  */
 @Injectable()
 export class TransactionsService {
@@ -21,13 +23,14 @@ export class TransactionsService {
   ) {}
 
   /**
-   * Secret key used for validating transaction signatures. This key is
-   * loaded from environment variables.
+   * Secret key used for validating transaction signatures.
+   * This key is loaded from environment variables.
    */
   private readonly secretKey = process.env.EVENT_KILU;
 
   /**
    * Processes a transaction by validating its checksum and saving it to the database.
+   * If the transaction is valid, it updates the user's progress.
    *
    * @param eventData - The transaction data received from an external source.
    * @param checksumHeader - The checksum received in the request header for validation.
@@ -70,8 +73,8 @@ export class TransactionsService {
     eventData['ownToken'] = calculatedChecksum;
     eventData['headerToken'] = checksumHeader;
 
+    // Extract reference and userId from the transaction reference
     const [reference, userId] = eventData.data.transaction.reference.split('/');
-
     eventData['reference'] = reference.trim() ?? '';
 
     // Validate the checksum and mark the payment as valid or invalid
@@ -80,6 +83,8 @@ export class TransactionsService {
       signatureChecksum == calculatedChecksum
     ) {
       eventData['validPayment'] = true;
+
+      // If a userId is provided, update the user's progress
       if (userId) {
         await this.usersService.findOne(userId);
         const progress: CreateUserProgressDto = {
@@ -105,9 +110,15 @@ export class TransactionsService {
     return cretaedTrans.save();
   }
 
+  /**
+   * Finds a transaction based on a specific field and value.
+   * @param field - The field to search by (e.g., 'reference', 'userId').
+   * @param value - The value to match in the specified field.
+   * @returns The transaction matching the criteria, or null if no match is found.
+   */
   async findTransactionBy(field: string, value: any) {
-    const filter = { [field]: value }; // Usamos una clave dinámica
-    const lesson = await this.trasactionModel.findOne(filter).exec();
-    return lesson || null;
+    const filter = { [field]: value }; // Use a dynamic key for the filter
+    const transaction = await this.trasactionModel.findOne(filter).exec();
+    return transaction || null;
   }
 }
