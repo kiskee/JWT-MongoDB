@@ -17,6 +17,7 @@ import { UpdateUserDto } from '../dto/update-user.dto';
 import { UsersService } from '../services/user.service';
 import { User } from '../shemas/user.schema';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { Cacheable } from '../../common/cache-decorator'
 
 /**
  * Controller for handling user-related API endpoints.
@@ -49,7 +50,9 @@ export class UsersController {
     return this.usersService.findAllUsers();
   }
 
+  
   @Get('search/:id')
+  @Cacheable(60000)
   async search(@Param('id') id: string): Promise<any> {
     return this.usersService.search(id);
   }
