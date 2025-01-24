@@ -8,6 +8,8 @@ import { Model } from 'mongoose';
 import { User } from '../shemas/user.schema';
 import * as bcrypt from 'bcrypt';
 import { UserProgressService } from './userProgress.service';
+import { EmailService } from 'src/email/services/email.service';
+import { SendEmailDto } from 'src/email/dto/send-email.dto';
 
 @Injectable()
 export class UsersService {
@@ -20,6 +22,7 @@ export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private readonly userProgressService: UserProgressService,
+    private readonly emailService:EmailService,
   ) {}
 
   /**
@@ -39,6 +42,16 @@ export class UsersService {
       newUser.updatedAt = new Date();
       const newUserCreated = await newUser.save();
       delete newUserCreated.password;
+      //send Email to the user 
+      const emailData: SendEmailDto = {
+        recipients: newUser.email, // Puede ser un array: ['usuario1@example.com', 'usuario2@example.com']
+        subject: 'Bienvenido a Formación Profesional de Entrenadores de Natación',
+        template: 'welcome', // Nombre del template
+        context: {
+          name: newUser.name, // Datos para reemplazar en el template
+        },
+      };
+      await this.emailService.sendEmail(emailData)
       return newUserCreated;
     } catch (error) {
       // Specific Mongoose validation errors.

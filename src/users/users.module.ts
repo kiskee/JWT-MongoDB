@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserProgress, UserProgressSchema } from './shemas/userProgress.shema';
 import { UserProgressController } from './controllers/userProgress.controller';
 import { UserProgressService } from './services/userProgress.service';
+import { EmailModule } from 'src/email/email.module';
 
 /**
  * UsersModule is a NestJS module that encapsulates functionality related to users and user progress.
@@ -21,6 +22,7 @@ import { UserProgressService } from './services/userProgress.service';
 
   // Modules and dependencies that this module requires
   imports: [
+    EmailModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET, // Use environment variable for JWT secret
       signOptions: { expiresIn: '15m' }, // Set token expiration time

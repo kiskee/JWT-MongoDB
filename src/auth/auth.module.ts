@@ -6,6 +6,7 @@ import { UsersModule } from 'src/users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/users/shemas/user.schema';
 import { JwtService } from '@nestjs/jwt';
+import { EmailModule } from 'src/email/email.module';
 
 /**
  * AuthModule is a NestJS module that encapsulates authentication-related functionality.
@@ -20,6 +21,7 @@ import { JwtService } from '@nestjs/jwt';
 
   // Modules and dependencies that this module requires
   imports: [
+    EmailModule,
     UsersModule, // Import the UsersModule to access user-related functionality
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]), // Register the User schema with Mongoose
   ],
