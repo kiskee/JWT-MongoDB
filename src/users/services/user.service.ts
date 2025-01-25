@@ -39,6 +39,9 @@ export class UsersService {
       } else {
         newUser.password = createUserDto.sub
       }
+      if(!newUser.picture){
+        newUser.picture = `${process.env.DEFAULT_IMG}`
+      }
       newUser.role = 'user';
       newUser.createdAt = new Date();
       newUser.updatedAt = new Date();
