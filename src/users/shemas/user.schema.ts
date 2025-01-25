@@ -31,7 +31,7 @@ export class User extends Document {
   @Prop({ unique: true })
   sub: string;
 
-  @Prop({ unique: true })
+  @Prop({ unique: false })
   password: string;
 
   @Prop()
