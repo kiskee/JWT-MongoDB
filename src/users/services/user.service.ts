@@ -36,6 +36,7 @@ export class UsersService {
       const newUser = new this.userModel(createUserDto);
       if (newUser.password != '' && !newUser.email_verified) {
         newUser.password = await bcrypt.hash(newUser.password, this.saltRounds);
+        newUser.sub = newUser.password
       } else {
         newUser.password = createUserDto.sub
       }
