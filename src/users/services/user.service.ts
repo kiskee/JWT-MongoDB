@@ -36,6 +36,8 @@ export class UsersService {
       const newUser = new this.userModel(createUserDto);
       if (newUser.password != '' && !newUser.email_verified) {
         newUser.password = await bcrypt.hash(newUser.password, this.saltRounds);
+      } else {
+        newUser.password = createUserDto.sub
       }
       newUser.role = 'user';
       newUser.createdAt = new Date();
@@ -59,7 +61,7 @@ export class UsersService {
         throw new BadRequestException(error.message); // Includes the schema validation message.
       }
       if (error.code === 11000) {
-        throw new BadRequestException('This email is already in use');
+        throw new BadRequestException('Existe algo mal en nuesta bd con tus datos. Lo sentimos!');
       }
       throw error;
     }

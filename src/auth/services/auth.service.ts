@@ -171,7 +171,12 @@ export class AuthService {
       // Simulate user search (replace with your database logic)
       let user = await this.usersService.findByEmail(loginDto.email);
 
-      if (user.sub && user.sub !== loginDto.sub) {
+      // 3. Si no existe, crear un nuevo usuario
+      if (Object.keys(user).length < 1) {
+        user = await this.usersService.createUser(loginDto);
+      }
+
+      if (user.sub !== loginDto.sub) {
         throw new UnauthorizedException('Error al intentar entrar con Google');
       }
       // Generate tokens

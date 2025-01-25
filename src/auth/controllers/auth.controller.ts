@@ -54,8 +54,12 @@ export class AuthController {
       forbidNonWhitelisted: true,
     }),
   )
-  loginGoogle(@Body() loginDto: GoogleDto) {
-    return this.authService.loginGoogle(loginDto);
+  async loginGoogle(@Body() loginDto: GoogleDto) {
+    try {
+      return  await this.authService.loginGoogle(loginDto);
+    } catch (error) {
+      throw error
+    }
   }
 
   /**
