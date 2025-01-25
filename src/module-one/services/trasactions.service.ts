@@ -38,6 +38,7 @@ export class TransactionsService {
    * @throws BadRequestException if the provided checksum does not match the expected value.
    */
   async processTrasaction(eventData: any, checksumHeader: any) {
+    const status = eventData.data.transaction.status;
     const signatureChecksum = eventData.signature.checksum;
 
     // Validate if the provided checksum matches the signature checksum
@@ -79,36 +80,48 @@ export class TransactionsService {
 
     // Validate the checksum and mark the payment as valid or invalid
     if (
-      checksumHeader == calculatedChecksum &&
-      signatureChecksum == calculatedChecksum
+      checksumHeader === calculatedChecksum &&
+      signatureChecksum === calculatedChecksum
     ) {
       eventData['validPayment'] = true;
 
-      // If a userId is provided, update the user's progress
-      if (userId) {
-        await this.usersService.findOne(userId);
-        const progress: CreateUserProgressDto = {
-          userId: userId,
-          courseId: '678aaa7ef28e21b40c841554',
-          currentModule: 1,
-          currentLesson: 1,
-          completedLessons: [],
-          totalLessons: 15,
-          quizScore: 0,
-          finalExamPassed: false,
-          startedAt: new Date().toISOString(),
-          completedAt: '',
-        };
-        await this.usersService.update(userId, {
-          role: 'student',
-          modules: [
-            {
-              courseId: '678aaa7ef28e21b40c841554',
-              userTransaction: calculatedChecksum,
-            },
-          ],
-        });
-        await this.userProgressService.create(progress);
+      // Process only if payment is not declined and userId is provided
+      if (status !== 'DECLINED' && userId) {
+        try {
+          // Verify user exists
+          await this.usersService.findOne(userId);
+
+          // Create user progress
+          const progress: CreateUserProgressDto = {
+            userId,
+            courseId: '678aaa7ef28e21b40c841554',
+            currentModule: 1,
+            currentLesson: 1,
+            completedLessons: [],
+            totalLessons: 15,
+            quizScore: 0,
+            finalExamPassed: false,
+            startedAt: new Date().toISOString(),
+            completedAt: '',
+          };
+
+          // Update user profile
+          await this.usersService.update(userId, {
+            role: 'student',
+            modules: [
+              {
+                courseId: '678aaa7ef28e21b40c841554',
+                userTransaction: calculatedChecksum,
+              },
+            ],
+          });
+
+          // Create user progress
+          await this.userProgressService.create(progress);
+        } catch (error) {
+          // Handle potential errors (e.g., user not found)
+          console.error('Error processing user progress:', error);
+        }
       }
     } else {
       eventData['validPayment'] = false;
