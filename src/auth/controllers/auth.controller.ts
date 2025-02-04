@@ -9,12 +9,15 @@ import {
   Get,
   Query,
   UseGuards,
+  Param,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { LoginDto } from '../dto/login.dto';
 import { GoogleDto } from '../dto/google.dto';
 import { JwtAuthGuard } from '../guard/jwt.guard';
 import { GetUser } from '../decorators/get-user.decorator';
+import { ForgotPasswordDto } from '../dto/forgot-password.dto';
+import { ResetPasswordDto } from '../dto/reset-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -110,5 +113,16 @@ export class AuthController {
     @GetUser() user: any,
   ) {
     return await this.authService.generateSignature(value, currency, user);
+  }
+
+  @Post('forgot-password/:email')
+  async forgotPassword(@Param('email') email: string) {
+    await this.authService.sendPasswordResetEmail(email);
+    return { message: 'Se envio un link para reestablecer la contraseña al correo proporcionado' };
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() data: ResetPasswordDto) {
+    return this.authService.resetPassword(data.token, data.newPassword);
   }
 }

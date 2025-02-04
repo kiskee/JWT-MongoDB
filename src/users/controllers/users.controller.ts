@@ -52,7 +52,7 @@ export class UsersController {
 
   
   @Get('search/:id')
-  @Cacheable(60000)
+  //@Cacheable(60000)
   async search(@Param('id') id: string): Promise<any> {
     return this.usersService.search(id);
   }

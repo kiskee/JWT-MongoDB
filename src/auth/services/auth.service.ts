@@ -1,4 +1,8 @@
-import { Inject, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { LoginDto } from '../dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -6,6 +10,9 @@ import { UsersService } from 'src/users/services/user.service';
 import { GoogleDto } from '../dto/google.dto';
 import { v4 as uuidv4 } from 'uuid';
 import * as crypto from 'crypto';
+import { EmailService } from 'src/email/services/email.service';
+import { SendEmailDto } from 'src/email/dto/send-email.dto';
+import { ForgotPasswordDto } from '../dto/forgot-password.dto';
 
 export class AuthService {
   private readonly jwtSecret = process.env.JWT_SECRET;
@@ -20,6 +27,7 @@ export class AuthService {
     @Inject(UsersService)
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   /**
@@ -30,7 +38,7 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     try {
       // Simulate user search (replace with your database logic)
-      const user = await this.usersService.findByEmail(loginDto.email);
+      const user = await this.usersService.findByEmail(loginDto.email as any);
 
       if (Object.keys(user).length === 0 && user.constructor === Object) {
         throw new UnauthorizedException('Usuario o Contraseña invalidos');
@@ -238,5 +246,45 @@ export class AuthService {
       signatureIntegrity: hashHex, // The generated SHA-256 hash (signature)
       expirationTime: formattedDate, // The expiration time of the transaction
     };
+  }
+
+  async sendPasswordResetEmail(email: string) {
+    console.log('entre al metodo', email);
+    const user = await this.usersService.findByEmail(email as any);
+    if (!user) return;
+
+    const token = this.jwtService.sign(
+      { sub: user.id },
+      { expiresIn: '15m', secret: this.jwtSecret },
+    );
+
+    const emailData: SendEmailDto = {
+      recipients: user.email, // Puede ser un array: ['usuario1@example.com', 'usuario2@example.com']
+      subject: 'Cambia tu contraseña en Svgswim',
+      template: 'reset-password', // Nombre del template
+      context: {
+        resetLink: `https://www.svgswim.top/change-pass?token=${token}`, //http://localhost:5173 //https://www.svgswim.top/change-pass
+      },
+    };
+    await this.emailService.sendEmail(emailData);
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    try {
+      console.log('entre');
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.jwtSecret,
+      });
+      console.log(payload);
+      const user = await this.usersService.findOne(payload.sub);
+      if (!user) throw new Error('User not found');
+
+      user.password = await bcrypt.hash(newPassword, 10);
+      await user.save();
+
+      return { message: 'Password updated successfully' };
+    } catch (error) {
+      throw new BadRequestException('Invalid or expired token');
+    }
   }
 }

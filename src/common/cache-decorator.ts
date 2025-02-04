@@ -1,7 +1,8 @@
 import * as cacheManager from 'cache-manager';
+import { generateCacheKey } from './cache-commons';
 
 // Create a singleton cache instance
-const cache = cacheManager.caching('memory', { max: 100, ttl: 10000 });
+export const cache = cacheManager.caching('memory', { max: 100, ttl: 10000 });
 
 export function Cacheable(ttl: number = 30000) {
   return function (
@@ -12,7 +13,7 @@ export function Cacheable(ttl: number = 30000) {
     const originalMethod = descriptor.value;
     descriptor.value = async function (...args: any[]) {
       const className = target.constructor.name;
-      const cacheKey = `${className}_${propertyKey}_${JSON.stringify(args)}`;
+      const cacheKey = generateCacheKey(className, propertyKey, args); // `${className}_${propertyKey}_${JSON.stringify(args)}`;
       try {
         const cachedResult = await (await cache).get(cacheKey);
         if (cachedResult !== undefined) {
