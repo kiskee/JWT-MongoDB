@@ -1,6 +1,8 @@
 import {
   BadRequestException,
+  HttpException,
   Inject,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { LoginDto } from '../dto/login.dto';
@@ -249,9 +251,10 @@ export class AuthService {
   }
 
   async sendPasswordResetEmail(email: string) {
-    console.log('entre al metodo', email);
     const user = await this.usersService.findByEmail(email as any);
-    if (!user) return;
+    if (!user) {
+      throw new NotFoundException("No se encontro ningun usuario registrado con este email")
+    }
 
     const token = this.jwtService.sign(
       { sub: user.id },

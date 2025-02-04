@@ -59,9 +59,9 @@ export class AuthController {
   )
   async loginGoogle(@Body() loginDto: GoogleDto) {
     try {
-      return  await this.authService.loginGoogle(loginDto);
+      return await this.authService.loginGoogle(loginDto);
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
@@ -117,8 +117,15 @@ export class AuthController {
 
   @Post('forgot-password/:email')
   async forgotPassword(@Param('email') email: string) {
-    await this.authService.sendPasswordResetEmail(email);
-    return { message: 'Se envio un link para reestablecer la contraseña al correo proporcionado' };
+    try {
+      await this.authService.sendPasswordResetEmail(email);
+      return {
+        message:
+          'Se envio un link para reestablecer la contraseña al correo proporcionado',
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Post('reset-password')
