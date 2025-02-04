@@ -251,8 +251,8 @@ export class AuthService {
   }
 
   async sendPasswordResetEmail(email: string) {
-    const user = await this.usersService.findByEmail(email as any);
-    if (!user) {
+    const user = await this.usersService.findByEmail(email);
+    if (!user || Object.entries(user).length === 0) {
       throw new NotFoundException("No se encontro ningun usuario registrado con este email")
     }
 
