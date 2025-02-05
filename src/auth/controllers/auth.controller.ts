@@ -130,6 +130,10 @@ export class AuthController {
 
   @Post('reset-password')
   async resetPassword(@Body() data: ResetPasswordDto) {
-    return this.authService.resetPassword(data.token, data.newPassword);
+    try {
+      return this.authService.resetPassword(data.token, data.newPassword);
+    } catch (error) {
+      throw error;
+    }
   }
 }

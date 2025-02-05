@@ -253,7 +253,9 @@ export class AuthService {
   async sendPasswordResetEmail(email: string) {
     const user = await this.usersService.findByEmail(email);
     if (!user || Object.entries(user).length === 0) {
-      throw new NotFoundException("No se encontro ningun usuario registrado con este email")
+      throw new NotFoundException(
+        'No se encontro ningun usuario registrado con este email',
+      );
     }
 
     const token = this.jwtService.sign(
@@ -274,13 +276,21 @@ export class AuthService {
 
   async resetPassword(token: string, newPassword: string) {
     try {
-      console.log('entre');
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.jwtSecret,
       });
-      console.log(payload);
+
+      if (!payload) {
+        throw new NotFoundException('Error validando el token!');
+      }
+      
       const user = await this.usersService.findOne(payload.sub);
-      if (!user) throw new Error('User not found');
+
+      if (!user || Object.entries(user).length === 0) {
+        throw new NotFoundException(
+          'No se encontro ningun usuario registrado con este email',
+        );
+      }
 
       user.password = await bcrypt.hash(newPassword, 10);
       await user.save();
